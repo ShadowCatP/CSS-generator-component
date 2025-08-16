@@ -1,3 +1,12 @@
+import type { ColorStop } from "./types";
+
+export const generateGradient = (colorStops: ColorStop[]): string => {
+  const sorted = colorStops.slice().sort((a, b) => a.position - b.position);
+  return `linear-gradient(to right, ${sorted
+    .map((stop) => `${stop.color} ${Math.round(stop.position)}%`)
+    .join(", ")})`;
+};
+
 export const interpolate = (
   color1: string,
   color2: string,

@@ -1,20 +1,22 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import { interpolate } from "../lib/utils";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type Dispatch,
+  type SetStateAction,
+} from "react";
+import type { ColorStop } from "../lib/types";
+import { interpolate, generateGradient } from "../lib/utils";
 
-export const ColorRamp = () => {
-  const [colorStops, setColorStops] = useState([
-    { id: 1, position: 0, color: "#833AB4" },
-    { id: 2, position: 100, color: "#FCB045" },
-  ]);
+interface ColorRampProps {
+  colorStops: ColorStop[];
+  setColorStops: Dispatch<SetStateAction<ColorStop[]>>;
+}
+
+export const ColorRamp = ({ colorStops, setColorStops }: ColorRampProps) => {
   const [draggedStopId, setDraggedStopId] = useState<number | null>(null);
   const rampRef = useRef<HTMLDivElement>(null);
-
-  const generateGradient = useCallback(() => {
-    const sorted = colorStops.slice().sort((a, b) => a.position - b.position);
-    return `linear-gradient(to right, ${sorted
-      .map((stop) => `${stop.color} ${Math.round(stop.position)}%`)
-      .join(", ")})`;
-  }, [colorStops]);
 
   const addStop = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!rampRef.current) return;
@@ -75,7 +77,7 @@ export const ColorRamp = () => {
         ),
       );
     },
-    [draggedStopId],
+    [draggedStopId, setColorStops],
   );
 
   const handleMouseUp = useCallback(() => {
@@ -96,34 +98,22 @@ export const ColorRamp = () => {
   }, [draggedStopId, handleMouseMove, handleMouseUp]);
 
   return (
-    <>
-      <div className="relative">
+    <div className="relative">
+      <div
+        ref={rampRef}
+        className="h-16 w-full cursor-pointer rounded-lg"
+        style={{ background: generateGradient(colorStops) }}
+        onClick={(e) => addStop(e)}
+      ></div>
+
+      {colorStops.map((stop) => (
         <div
-          ref={rampRef}
-          className="h-16 w-full cursor-pointer rounded-lg"
-          style={{ background: generateGradient() }}
-          onClick={(e) => addStop(e)}
+          key={stop.id}
+          className="absolute top-0 h-full w-4 -translate-x-[50%] cursor-all-scroll rounded-full border-2 border-black inset-ring-2 inset-ring-white"
+          style={{ left: `${stop.position}%`, backgroundColor: stop.color }}
+          onMouseDown={() => handleMouseDown(stop.id)}
         ></div>
-
-        {colorStops.map((stop) => (
-          <div
-            key={stop.id}
-            className="absolute top-0 h-full w-4 -translate-x-[50%] cursor-all-scroll rounded-full border-2 border-black inset-ring-2 inset-ring-white"
-            style={{ left: `${stop.position}%`, backgroundColor: stop.color }}
-            onMouseDown={() => handleMouseDown(stop.id)}
-          ></div>
-        ))}
-      </div>
-
-      <div className="mt-6 flex flex-col items-start">
-        <span className="mb-2 font-semibold text-gray-700">CSS Gradient:</span>
-        <div
-          className="w-full rounded border border-gray-300 bg-gray-100 px-4 py-2 font-mono text-sm break-all text-gray-800 shadow-sm select-all"
-          style={{ maxWidth: 600 }}
-        >
-          {generateGradient()}
-        </div>
-      </div>
-    </>
+      ))}
+    </div>
   );
 };
