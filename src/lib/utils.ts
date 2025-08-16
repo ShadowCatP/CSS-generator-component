@@ -1,4 +1,5 @@
 import type { ColorStop } from "./types";
+import Color from "color";
 
 export const generateGradient = (colorStops: ColorStop[]): string => {
   const sorted = colorStops.slice().sort((a, b) => a.position - b.position);
@@ -12,34 +13,16 @@ export const interpolate = (
   color2: string,
   factor: number = 0.5,
 ): string => {
-  const [r1, g1, b1] = hexToRgb(color1);
-  const [r2, g2, b2] = hexToRgb(color2);
+  const c1 = Color(color1);
+  const c2 = Color(color2);
 
-  const r = Math.round(r1 + (r2 - r1) * factor);
-  const g = Math.round(g1 + (g2 - g1) * factor);
-  const b = Math.round(b1 + (b2 - b1) * factor);
+  const r = Math.round(c1.red() + (c2.red() - c1.red()) * factor);
+  const g = Math.round(c1.green() + (c2.green() - c1.green()) * factor);
+  const b = Math.round(c1.blue() + (c2.blue() - c1.blue()) * factor);
 
-  return rgbToHex(r, g, b);
+  return Color({ r, g, b }).hex().toUpperCase();
 };
 
-const hexToRgb = (hex: string): [number, number, number] => {
-  hex = hex.replace(/^#/, "");
-  if (hex.length === 3) {
-    hex = hex
-      .split("")
-      .map((x) => x + x)
-      .join("");
-  }
-  const num = parseInt(hex, 16);
-  return [(num >> 16) & 255, (num >> 8) & 255, num & 255];
-};
-
-const rgbToHex = (r: number, g: number, b: number): string => {
-  return (
-    "#" +
-    [r, g, b]
-      .map((x) => x.toString(16).padStart(2, "0"))
-      .join("")
-      .toUpperCase()
-  );
+export const isValidHex = (color: string) => {
+  return /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(color);
 };

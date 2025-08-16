@@ -7,7 +7,7 @@ import {
   type SetStateAction,
 } from "react";
 import type { ColorStop } from "../lib/types";
-import { interpolate, generateGradient } from "../lib/utils";
+import { interpolate, generateGradient, isValidHex } from "../lib/utils";
 
 interface ColorRampProps {
   colorStops: ColorStop[];
@@ -110,7 +110,10 @@ export const ColorRamp = ({ colorStops, setColorStops }: ColorRampProps) => {
         <div
           key={stop.id}
           className="absolute top-0 h-full w-4 -translate-x-[50%] cursor-all-scroll rounded-full border-2 border-black inset-ring-2 inset-ring-white"
-          style={{ left: `${stop.position}%`, backgroundColor: stop.color }}
+          style={{
+            left: `${stop.position}%`,
+            backgroundColor: isValidHex(stop.color) ? stop.color : "#FFFFFF",
+          }}
           onMouseDown={() => handleMouseDown(stop.id)}
         ></div>
       ))}
