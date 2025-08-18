@@ -6,9 +6,16 @@ import { isValidHex } from "../lib/utils";
 interface ColorListProps {
   colorStops: ColorStop[];
   setColorStops: Dispatch<SetStateAction<ColorStop[]>>;
+  selectedStopId: number;
+  setSelectedStopId: Dispatch<SetStateAction<number>>;
 }
 
-export const ColorList = ({ colorStops, setColorStops }: ColorListProps) => {
+export const ColorList = ({
+  colorStops,
+  setColorStops,
+  selectedStopId,
+  setSelectedStopId,
+}: ColorListProps) => {
   const removeStop = (stopId: number) => {
     if (colorStops.length > 2) {
       setColorStops((prev) => prev.filter((stop) => stop.id !== stopId));
@@ -16,14 +23,15 @@ export const ColorList = ({ colorStops, setColorStops }: ColorListProps) => {
   };
 
   return (
-    <div className="flex h-48 flex-col gap-4 overflow-auto pr-5">
+    <div className="flex h-full flex-col gap-4 overflow-hidden">
       <p className="text-2xl font-bold">Color List</p>
 
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-2 overflow-auto pr-5">
         {colorStops.map((stop) => (
           <div
             key={stop.id}
-            className="flex items-center justify-between rounded-xl border-2 border-neutral-200 bg-neutral-100 p-3"
+            className={`flex items-center justify-between rounded-xl border-2 border-neutral-200 p-3 ${selectedStopId === stop.id ? "bg-neutral-300" : "bg-neutral-100"}`}
+            onClick={() => setSelectedStopId(stop.id)}
           >
             <div
               className="h-8 w-8 rounded-lg"

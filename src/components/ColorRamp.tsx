@@ -12,9 +12,14 @@ import { interpolate, generateGradient, isValidHex } from "../lib/utils";
 interface ColorRampProps {
   colorStops: ColorStop[];
   setColorStops: Dispatch<SetStateAction<ColorStop[]>>;
+  setSelectedStopId: Dispatch<SetStateAction<number>>;
 }
 
-export const ColorRamp = ({ colorStops, setColorStops }: ColorRampProps) => {
+export const ColorRamp = ({
+  colorStops,
+  setColorStops,
+  setSelectedStopId,
+}: ColorRampProps) => {
   const [draggedStopId, setDraggedStopId] = useState<number | null>(null);
   const rampRef = useRef<HTMLDivElement>(null);
 
@@ -59,6 +64,7 @@ export const ColorRamp = ({ colorStops, setColorStops }: ColorRampProps) => {
 
   const handleMouseDown = (id: number) => {
     setDraggedStopId(id);
+    setSelectedStopId(id);
   };
 
   const handleMouseMove = useCallback(

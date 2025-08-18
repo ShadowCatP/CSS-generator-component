@@ -1,8 +1,21 @@
 import type { ColorStop } from "./types";
 import Color from "color";
 
-export const generateGradient = (colorStops: ColorStop[]): string => {
+export const generateGradient = (
+  colorStops: ColorStop[],
+  tailwind?: boolean,
+): string => {
   const sorted = colorStops.slice().sort((a, b) => a.position - b.position);
+
+  if (tailwind) {
+    const stops = sorted.map((stop, idx) => {
+      if (idx === 0) return `from-[${stop.color}]`;
+      if (idx === sorted.length - 1) return `to-[${stop.color}]`;
+      return `via-[${stop.color}]`;
+    });
+    return `bg-gradient-to-r ${stops.join(" ")}`;
+  }
+
   return `linear-gradient(to right, ${sorted
     .map((stop) => `${stop.color} ${Math.round(stop.position)}%`)
     .join(", ")})`;
