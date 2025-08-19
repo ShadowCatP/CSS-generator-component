@@ -4,6 +4,7 @@ import Color from "color";
 export const generateGradient = (
   colorStops: ColorStop[],
   tailwind?: boolean,
+  radial?: boolean,
 ): string => {
   const sorted = colorStops.slice().sort((a, b) => a.position - b.position);
 
@@ -13,10 +14,15 @@ export const generateGradient = (
       if (idx === sorted.length - 1) return `to-[${stop.color}]`;
       return `via-[${stop.color}]`;
     });
-    return `bg-gradient-to-r ${stops.join(" ")}`;
+    return radial
+      ? `bg-gradient-radial ${stops.join(" ")}`
+      : `bg-gradient-to-r ${stops.join(" ")}`;
   }
 
-  return `linear-gradient(to right, ${sorted
+  const gradientType = radial
+    ? "radial-gradient(circle"
+    : "linear-gradient(to right";
+  return `${gradientType}, ${sorted
     .map((stop) => `${stop.color} ${Math.round(stop.position)}%`)
     .join(", ")})`;
 };

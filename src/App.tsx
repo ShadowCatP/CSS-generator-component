@@ -11,15 +11,38 @@ export const App = () => {
     { id: 2, position: 100, color: "#FCB045" },
   ]);
   const [selectedStopId, setSelectedStopId] = useState(1);
+  const [isRadial, setIsRadial] = useState(false);
 
   return (
     <div className="flex h-screen items-center justify-center">
       <div className="mx-6 flex w-full max-w-7xl flex-col gap-6">
+        <div
+          className="h-48 w-full rounded"
+          style={{ background: generateGradient(colorStops, false, isRadial) }}
+        ></div>
+
         <ColorRamp
           colorStops={colorStops}
           setColorStops={setColorStops}
           setSelectedStopId={setSelectedStopId}
         />
+
+        <div className="flex items-center">
+          <div className="flex items-center rounded border-2 border-neutral-300 tracking-wider">
+            <button
+              className={`${isRadial ? "" : "bg-neutral-200"} cursor-pointer rounded-l border-r border-neutral-400 p-2 transition-colors duration-300`}
+              onClick={() => setIsRadial(false)}
+            >
+              Linear
+            </button>
+            <button
+              className={`${isRadial ? "bg-neutral-200" : ""} cursor-pointer rounded-r p-2 transition-colors duration-300`}
+              onClick={() => setIsRadial(true)}
+            >
+              Radial
+            </button>
+          </div>
+        </div>
 
         <div className="grid h-64 grid-cols-2 items-center gap-8">
           <HexColorPicker
@@ -53,7 +76,7 @@ export const App = () => {
               CSS Gradient:
             </span>
             <div className="w-full rounded border border-gray-300 bg-gray-100 px-4 py-2 font-mono text-sm break-all text-gray-800 shadow-sm select-all">
-              {generateGradient(colorStops)}
+              {generateGradient(colorStops, false, isRadial)}
             </div>
           </div>
 
@@ -62,7 +85,7 @@ export const App = () => {
               Tailwind Gradient:
             </span>
             <div className="w-full rounded border border-gray-300 bg-gray-100 px-4 py-2 font-mono text-sm break-all text-gray-800 shadow-sm select-all">
-              {generateGradient(colorStops, true)}
+              {generateGradient(colorStops, true, isRadial)}
             </div>
           </div>
         </div>
