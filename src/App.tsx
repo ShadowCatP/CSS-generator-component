@@ -64,9 +64,9 @@ export const App = () => {
           </div>
         </div>
 
-        <div className="grid h-64 grid-cols-2 items-center gap-8">
+        <div className="grid grid-cols-1 items-center gap-8 md:h-64 md:grid-cols-2">
           <HexColorPicker
-            style={{ width: "100%", height: "100%" }}
+            style={{ width: "100%", height: "calc(var(--spacing) * 64)" }}
             color={
               colorStops.find((stop) => stop.id === selectedStopId)?.color ??
               "#FFF"
@@ -90,7 +90,7 @@ export const App = () => {
           />
         </div>
 
-        <div className="flex max-w-1/2 flex-col gap-6">
+        <div className="flex w-full gap-6 md:max-w-1/2 md:flex-col">
           <div className="flex flex-col">
             <span className="mb-2 font-semibold text-gray-700">
               CSS Gradient:
