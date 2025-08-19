@@ -12,13 +12,21 @@ export const App = () => {
   ]);
   const [selectedStopId, setSelectedStopId] = useState(1);
   const [isRadial, setIsRadial] = useState(false);
+  const [gradientAngle, setGradientAngle] = useState(90);
 
   return (
     <div className="flex h-screen items-center justify-center">
       <div className="mx-6 flex w-full max-w-7xl flex-col gap-6">
         <div
           className="h-48 w-full rounded"
-          style={{ background: generateGradient(colorStops, false, isRadial) }}
+          style={{
+            background: generateGradient(
+              colorStops,
+              false,
+              isRadial,
+              gradientAngle,
+            ),
+          }}
         ></div>
 
         <ColorRamp
@@ -27,7 +35,7 @@ export const App = () => {
           setSelectedStopId={setSelectedStopId}
         />
 
-        <div className="flex items-center">
+        <div className="flex items-center gap-8">
           <div className="flex items-center rounded border-2 border-neutral-300 tracking-wider">
             <button
               className={`${isRadial ? "" : "bg-neutral-200"} cursor-pointer rounded-l border-r border-neutral-400 p-2 transition-colors duration-300`}
@@ -41,6 +49,18 @@ export const App = () => {
             >
               Radial
             </button>
+          </div>
+
+          <div className="flex flex-1 gap-5">
+            <input
+              type="range"
+              className="w-full max-w-lg"
+              min={0}
+              max={360}
+              value={gradientAngle}
+              onChange={(e) => setGradientAngle(parseInt(e.target.value))}
+            />
+            <p className="font-mono text-lg tracking-wider">{gradientAngle}</p>
           </div>
         </div>
 
@@ -76,7 +96,7 @@ export const App = () => {
               CSS Gradient:
             </span>
             <div className="w-full rounded border border-gray-300 bg-gray-100 px-4 py-2 font-mono text-sm break-all text-gray-800 shadow-sm select-all">
-              {generateGradient(colorStops, false, isRadial)}
+              {generateGradient(colorStops, false, isRadial, gradientAngle)}
             </div>
           </div>
 
@@ -85,7 +105,7 @@ export const App = () => {
               Tailwind Gradient:
             </span>
             <div className="w-full rounded border border-gray-300 bg-gray-100 px-4 py-2 font-mono text-sm break-all text-gray-800 shadow-sm select-all">
-              {generateGradient(colorStops, true, isRadial)}
+              {generateGradient(colorStops, true, isRadial, gradientAngle)}
             </div>
           </div>
         </div>

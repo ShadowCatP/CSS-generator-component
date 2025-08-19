@@ -1,10 +1,21 @@
 import type { ColorStop } from "./types";
 import Color from "color";
 
+const angleToDirection = (angle?: number): { css: string; tw: string } => {
+  if (angle === undefined || angle === 90)
+    return { css: "to right", tw: "to-r" };
+  if (angle === 180) return { css: "to bottom", tw: "to-b" };
+  if (angle === 270) return { css: "to left", tw: "to-l" };
+  if (angle === 0) return { css: "to top", tw: "to-t" };
+
+  return { css: `${angle}deg`, tw: `[${angle}deg]` };
+};
+
 export const generateGradient = (
   colorStops: ColorStop[],
   tailwind?: boolean,
   radial?: boolean,
+  angle?: number,
 ): string => {
   const sorted = colorStops.slice().sort((a, b) => a.position - b.position);
 
@@ -14,17 +25,24 @@ export const generateGradient = (
       if (idx === sorted.length - 1) return `to-[${stop.color}]`;
       return `via-[${stop.color}]`;
     });
-    return radial
-      ? `bg-gradient-radial ${stops.join(" ")}`
-      : `bg-gradient-to-r ${stops.join(" ")}`;
+    if (radial) {
+      return `bg-gradient-radial ${stops.join(" ")}`;
+    } else {
+      const dir = angleToDirection(angle).tw;
+      return `bg-gradient-${dir} ${stops.join(" ")}`;
+    }
   }
 
-  const gradientType = radial
-    ? "radial-gradient(circle"
-    : "linear-gradient(to right";
-  return `${gradientType}, ${sorted
-    .map((stop) => `${stop.color} ${Math.round(stop.position)}%`)
-    .join(", ")})`;
+  if (radial) {
+    return `radial-gradient(circle, ${sorted
+      .map((stop) => `${stop.color} ${Math.round(stop.position)}%`)
+      .join(", ")})`;
+  } else {
+    const dir = angleToDirection(angle).css;
+    return `linear-gradient(${dir}, ${sorted
+      .map((stop) => `${stop.color} ${Math.round(stop.position)}%`)
+      .join(", ")})`;
+  }
 };
 
 export const interpolate = (
